@@ -2,30 +2,43 @@ import java.io.*;
 import java.util.Scanner;
 
 public class Main {
+
+    public static boolean isEmptyFile (File textFile) throws IOException {
+        try (BufferedReader inBuffer = new BufferedReader(new FileReader(textFile))) {
+            return inBuffer.readLine() == null;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
     public static void main(String[] args) throws IOException {
 
-        Scanner sc = new Scanner(System.in);
-
-        String[] products = {
+        final String[] products = {
                 "Молоко",
                 "Хлеб",
                 "Сливочное масло",
                 "Макароны",
-                "Творог"
+                "Творог",
+                "Мука"
         };
 
-        int[] prices = {80, 45, 120, 62, 88};
+        final int[] prices = {80, 45, 120, 62, 88, 74};
 
-        Basket basket = new Basket(products, prices);
-
+        Scanner sc = new Scanner(System.in);
         File fileBasket = new File("basket.txt");
+        Basket basket;
 
-        Basket.loadFromTxtFile(fileBasket);
-
-        System.out.println("Список продуктов для выбора:");
-        for (int i = 0; i < products.length; i++) {
-            System.out.println((i + 1) + ". " + products[i] + " " + prices[i] + " руб/шт");
+        if (fileBasket.canRead() && !isEmptyFile(fileBasket)){
+            basket = Basket.loadFromTxtFile(fileBasket);
+            System.out.println("У вас уже есть список покупок.");
+            basket.printCart();
+        } else {
+            System.out.println("У вас пустая корзина");
+            basket = new Basket(products, prices);
         }
+
+        basket.printChoice();
 
         while (true) {
             System.out.println("Введите номер продукта и его количество через пробел:");

@@ -1,5 +1,7 @@
 import java.io.*;
-import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Basket {
@@ -39,6 +41,13 @@ public class Basket {
         System.out.println("Итоговая сумма: " + sumTotal() + " руб");
     }
 
+    public void printChoice(){
+        System.out.println("Список продуктов для выбора:");
+        for (int i = 0; i < products.length; i++) {
+            System.out.println((i + 1) + ". " + products[i] + " " + prices[i] + " руб/шт");
+        };
+    }
+
     public void saveTxt(File textFile) throws IOException {
         try (BufferedWriter outBuffer = new BufferedWriter(new FileWriter(textFile))) {
             for (int i = 0; i < products.length; i++){
@@ -53,15 +62,24 @@ public class Basket {
     public static Basket loadFromTxtFile(File textFile) throws IOException {
         Basket basket = null;
         try (BufferedReader inBuffer = new BufferedReader(new FileReader(textFile))) {
-            String[] fileInfo = inBuffer.lines().collect(Collectors.toList()).toArray(new String[0]);
-            String[] fileProducts = new String[fileInfo.length];
-            int[] filePrices = new int[fileInfo.length];
-            int[] fileCount = new int[fileInfo.length];
-            for (int i = 0; i < fileInfo.length; i++) {
-                String[] fileLine = fileInfo[i].split(";");
+            List<String> fileInfo = inBuffer.lines().collect(Collectors.toList());
+            String[] fileProducts = new String[fileInfo.size()];
+            int[] filePrices = new int[fileInfo.size()];
+            int[] fileCount = new int[fileInfo.size()];
+            for (int i = 0; i < fileInfo.size(); i++) {
+                String[] fileLine = fileInfo.get(i).toString().split(";");
+                if (fileLine.length < 3) {
+                    System.out.println("Неверный формат файла");
+                    break;
+                }
                 fileProducts[i] = fileLine[0];
-                filePrices[i] = Integer.parseInt(fileLine[1]);
-                fileCount[i] = Integer.parseInt(fileLine[2]);
+                try {
+                    filePrices[i] = Integer.parseInt(fileLine[1]);
+                    fileCount[i] = Integer.parseInt(fileLine[2]);
+                } catch (NumberFormatException exception){
+                    System.out.println("Неверный формат файла");
+                }
+
             }
             basket = new Basket(fileProducts, filePrices);
             for (int j = 0; j < fileCount.length; j++) {
