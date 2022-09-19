@@ -1,6 +1,4 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +17,7 @@ public class Basket {
         countProduct[productNum - 1] += amount;
     }
 
-    private int sumTotal(){
+    private int sumTotal() {
         int sum = 0;
         for (int j = 0; j < products.length; j++) {
             if (countProduct[j] != 0) {
@@ -30,7 +28,7 @@ public class Basket {
         return sum;
     }
 
-    public void printCart(){
+    public void printCart() {
         System.out.println("Ваша корзина:");
         for (int i = 0; i < products.length; i++) {
             if (countProduct[i] != 0) {
@@ -41,20 +39,20 @@ public class Basket {
         System.out.println("Итоговая сумма: " + sumTotal() + " руб");
     }
 
-    public void printChoice(){
+    public void printChoice() {
         System.out.println("Список продуктов для выбора:");
         for (int i = 0; i < products.length; i++) {
             System.out.println((i + 1) + ". " + products[i] + " " + prices[i] + " руб/шт");
-        };
+        }
     }
 
     public void saveTxt(File textFile) throws IOException {
         try (BufferedWriter outBuffer = new BufferedWriter(new FileWriter(textFile))) {
-            for (int i = 0; i < products.length; i++){
+            for (int i = 0; i < products.length; i++) {
                 outBuffer.write(products[i] + ";" + prices[i] + ";" + countProduct[i]);
                 outBuffer.newLine();
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -67,24 +65,17 @@ public class Basket {
             int[] filePrices = new int[fileInfo.size()];
             int[] fileCount = new int[fileInfo.size()];
             for (int i = 0; i < fileInfo.size(); i++) {
-                String[] fileLine = fileInfo.get(i).toString().split(";");
-                if (fileLine.length < 3) {
-                    System.out.println("Неверный формат файла");
-                    break;
-                }
+                String[] fileLine = fileInfo.get(i).split(";");
                 fileProducts[i] = fileLine[0];
-                try {
-                    filePrices[i] = Integer.parseInt(fileLine[1]);
-                    fileCount[i] = Integer.parseInt(fileLine[2]);
-                } catch (NumberFormatException exception){
-                    System.out.println("Неверный формат файла");
-                }
-
+                filePrices[i] = Integer.parseInt(fileLine[1]);
+                fileCount[i] = Integer.parseInt(fileLine[2]);
             }
             basket = new Basket(fileProducts, filePrices);
             for (int j = 0; j < fileCount.length; j++) {
-                basket.addToCart(j+1, fileCount[j]);
+                basket.addToCart(j + 1, fileCount[j]);
             }
+            System.out.println("У вас уже есть список покупок");
+            basket.printCart();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

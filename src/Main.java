@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static boolean isEmptyFile (File textFile) throws IOException {
+    public static boolean isEmptyFile(File textFile) throws IOException {
         try (BufferedReader inBuffer = new BufferedReader(new FileReader(textFile))) {
             return inBuffer.readLine() == null;
         } catch (IOException e) {
@@ -29,10 +29,13 @@ public class Main {
         File fileBasket = new File("basket.txt");
         Basket basket;
 
-        if (fileBasket.canRead() && !isEmptyFile(fileBasket)){
-            basket = Basket.loadFromTxtFile(fileBasket);
-            System.out.println("У вас уже есть список покупок.");
-            basket.printCart();
+        if (fileBasket.canRead() && !isEmptyFile(fileBasket)) {
+            try {
+                basket = Basket.loadFromTxtFile(fileBasket);
+            } catch (Exception e) {
+                System.out.println("Неверный формат файла " + fileBasket.getName() + ". Будет создана пустая корзина");
+                basket = new Basket(products, prices);
+            }
         } else {
             System.out.println("У вас пустая корзина");
             basket = new Basket(products, prices);
@@ -72,7 +75,7 @@ public class Main {
                     if (count < 0) {
                         System.out.println("Введено отрицательное количество. Попробуйте еще раз");
                     } else {
-                        basket.addToCart(numberProduct,count);
+                        basket.addToCart(numberProduct, count);
                         basket.saveTxt(fileBasket);
                     }
                 }
