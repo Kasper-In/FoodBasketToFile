@@ -28,8 +28,9 @@ public class Main {
         final int[] prices = {80, 45, 120, 62, 88, 74};
 
         Scanner sc = new Scanner(System.in);
-        File fileBasket = new File("basket.txt");
-        File fiLeLog = new File("log.csv");
+        //final File fileBasket = new File("basket.txt");
+        final File fiLeLog = new File("log.csv");
+        final File fileJsonBasket = new File ("basket.json");
         Basket basket;
         ClientLog clientLog = new ClientLog();
 
@@ -41,11 +42,12 @@ public class Main {
             }
         }
 
-        if (fileBasket.canRead() && !isEmptyFile(fileBasket)) {
+        if (fileJsonBasket.canRead() && !isEmptyFile(fileJsonBasket)) {
             try {
-                basket = Basket.loadFromTxtFile(fileBasket);
+                //basket = Basket.loadFromTxtFile(fileBasket);
+                basket = Basket.loadFromJson(fileJsonBasket);
             } catch (Exception e) {
-                System.out.println("Неверный формат файла " + fileBasket.getName() + ". Будет создана пустая корзина");
+                System.out.println("Неверный формат файла. Будет создана пустая корзина");
                 basket = new Basket(products, prices);
             }
         } else {
@@ -88,7 +90,8 @@ public class Main {
                         System.out.println("Введено отрицательное количество. Попробуйте еще раз");
                     } else {
                         basket.addToCart(numberProduct, count);
-                        basket.saveTxt(fileBasket);
+                        //basket.saveTxt(fileBasket);
+                        basket.saveJson(fileJsonBasket);
                         clientLog.log(numberProduct, count);
                         clientLog.exportAsCSV(fiLeLog);
                     }

@@ -1,3 +1,6 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,7 +49,7 @@ public class Basket {
         }
     }
 
-    public void saveTxt(File textFile) throws IOException {
+    public void saveTxt(File textFile) {
         try (BufferedWriter outBuffer = new BufferedWriter(new FileWriter(textFile))) {
             for (int i = 0; i < products.length; i++) {
                 outBuffer.write(products[i] + ";" + prices[i] + ";" + countProduct[i]);
@@ -57,7 +60,17 @@ public class Basket {
         }
     }
 
-    public static Basket loadFromTxtFile(File textFile) throws IOException {
+    public void saveJson(File jsonFile) {
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        try (BufferedWriter wr = new BufferedWriter(new FileWriter(jsonFile))){
+            wr.write(gson.toJson(this));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static Basket loadFromTxtFile(File textFile) {
         Basket basket = null;
         try (BufferedReader inBuffer = new BufferedReader(new FileReader(textFile))) {
             List<String> fileInfo = inBuffer.lines().collect(Collectors.toList());
@@ -74,6 +87,20 @@ public class Basket {
             for (int j = 0; j < fileCount.length; j++) {
                 basket.addToCart(j + 1, fileCount[j]);
             }
+            System.out.println("У вас уже есть список покупок");
+            basket.printCart();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        return basket;
+    }
+
+    public static Basket loadFromJson(File jsonFile) {
+        Basket basket = null;
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        try (BufferedReader rd = new BufferedReader(new FileReader(jsonFile))){
+            basket = gson.fromJson(rd,Basket.class);
             System.out.println("У вас уже есть список покупок");
             basket.printCart();
         } catch (IOException e) {
