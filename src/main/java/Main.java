@@ -1,9 +1,11 @@
+import com.opencsv.CSVWriter;
+
 import java.io.*;
 import java.util.Scanner;
 
 public class Main {
 
-    public static boolean isEmptyFile(File textFile) throws IOException {
+    public static boolean isEmptyFile(File textFile) {
         try (BufferedReader inBuffer = new BufferedReader(new FileReader(textFile))) {
             return inBuffer.readLine() == null;
         } catch (IOException e) {
@@ -12,7 +14,7 @@ public class Main {
         return false;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         final String[] products = {
                 "Молоко",
@@ -27,7 +29,17 @@ public class Main {
 
         Scanner sc = new Scanner(System.in);
         File fileBasket = new File("basket.txt");
+        File fiLeLog = new File("log.csv");
         Basket basket;
+        ClientLog clientLog = new ClientLog();
+
+        if (!fiLeLog.exists() || isEmptyFile(fiLeLog)) {
+            try (CSVWriter wr = new CSVWriter(new FileWriter(fiLeLog))){
+                wr.writeNext(new String[]{"productNum", "amount"});
+            } catch (IOException e){
+                System.out.println(e.getMessage());
+            }
+        }
 
         if (fileBasket.canRead() && !isEmptyFile(fileBasket)) {
             try {
@@ -77,6 +89,8 @@ public class Main {
                     } else {
                         basket.addToCart(numberProduct, count);
                         basket.saveTxt(fileBasket);
+                        clientLog.log(numberProduct, count);
+                        clientLog.exportAsCSV(fiLeLog);
                     }
                 }
 
