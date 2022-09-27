@@ -63,7 +63,7 @@ public class Basket {
     public void saveJson(File jsonFile) {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
-        try (BufferedWriter wr = new BufferedWriter(new FileWriter(jsonFile))){
+        try (BufferedWriter wr = new BufferedWriter(new FileWriter(jsonFile))) {
             wr.write(gson.toJson(this));
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -99,8 +99,8 @@ public class Basket {
         Basket basket = null;
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
-        try (BufferedReader rd = new BufferedReader(new FileReader(jsonFile))){
-            basket = gson.fromJson(rd,Basket.class);
+        try (BufferedReader rd = new BufferedReader(new FileReader(jsonFile))) {
+            basket = gson.fromJson(rd, Basket.class);
             System.out.println("У вас уже есть список покупок");
             basket.printCart();
         } catch (IOException e) {
